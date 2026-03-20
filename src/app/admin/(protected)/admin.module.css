@@ -1,0 +1,61 @@
+.adminLayout {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--background);
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #1a1a1a;
+  color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+.brand {
+  padding: 20px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  border-bottom: 1px solid #333;
+  color: var(--accent);
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+  flex: 1;
+}
+
+.nav a {
+  padding: 12px 20px;
+  color: #ccc;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.nav a:hover, .nav a.active {
+  background-color: var(--secondary);
+  color: white;
+  border-left: 4px solid var(--accent);
+}
+
+.userBox {
+  padding: 20px;
+  border-top: 1px solid #333;
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.logoutBtn {
+  display: inline-block;
+  margin-top: 10px;
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+.mainContent {
+  flex: 1;
+  padding: 40px;
+  overflow-y: auto;
+}

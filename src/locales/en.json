@@ -1,0 +1,35 @@
+{
+  "common": {
+    "donate": "Donate",
+    "register": "Register",
+    "contact": "Contact",
+    "readMore": "Read More",
+    "submit": "Submit"
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "heritage": "Heritage",
+    "members": "Members",
+    "events": "Events",
+    "jobs": "Jobs",
+    "schemes": "Schemes",
+    "marketplace": "Adi Haat",
+    "gallery": "Gallery",
+    "contact": "Contact"
+  },
+  "home": {
+    "heroTitle": "Empowering the Nayka Community",
+    "heroSubtitle": "A digital hub for social development, cultural preservation, and community welfare initiatives.",
+    "joinUs": "Join the Community",
+    "supportUs": "Support Our Cause",
+    "missionTitle": "Our Mission",
+    "missionDesc": "To strengthen unity within the Nayka Samaj, promote education, and preserve cultural values."
+  },
+  "footer": {
+    "copyright": "© 2026 Nayka Samaj. All rights reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms & Conditions",
+    "disclaimer": "Disclaimer"
+  }
+}

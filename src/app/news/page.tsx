@@ -1,0 +1,110 @@
+"use client";
+
+import React, { useEffect, useState } from "react";
+import { useLanguage } from "@/context/LanguageContext";
+
+interface Article {
+  _id: string;
+  title: string;
+  content: string;
+  category: string;
+  createdAt: string;
+}
+
+export default function News() {
+  const { t } = useLanguage();
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("ALL");
+
+  const mockNews = [
+    { _id: "1", title: "Project Setu Beta Release", content: "We are thrilled to launch the beta version of the Nayka Samaj portal...", category: "NEWS", createdAt: new Date().toISOString() },
+    { _id: "2", title: "Fact Check: Scholarship Deadline", content: "Contrary to rumors circulating on WhatsApp, the deadline for the Vidya Scheme has not been extended.", category: "FACT_CHECK", createdAt: new Date(Date.now() - 86400000).toISOString() },
+    { _id: "3", title: "President's Address on Foundation Day", content: "Our rich heritage continues to be the bedrock of our modern society...", category: "STATEMENT", createdAt: new Date(Date.now() - 172800000).toISOString() }
+  ];
+
+  useEffect(() => {
+    const fetchArticles = async () => {
+      try {
+        const query = filter !== "ALL" ? `?category=${filter}` : "";
+        const res = await fetch(`/api/news${query}`);
+        const data = await res.json();
+        if (data && data.length > 0) {
+          setArticles(data);
+        } else {
+          setArticles(filter === "ALL" ? mockNews : mockNews.filter(n => n.category === filter));
+        }
+      } catch (e) {
+        setArticles(filter === "ALL" ? mockNews : mockNews.filter(n => n.category === filter));
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchArticles();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter]);
+
+  const categories = ["ALL", "NEWS", "ALERT", "FACT_CHECK", "STATEMENT", "BLOG"];
+
+  return (
+    <div className="animate-fade-in" style={{ padding: "60px 0" }}>
+      <div className="container" style={{ maxWidth: "1000px" }}>
+        <h1 style={{ fontSize: "2.5rem", color: "var(--primary)", marginBottom: "30px", textAlign: "center" }}>
+          Official Information & News
+        </h1>
+
+        <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", justifyContent: "center", marginBottom: "40px" }}>
+          {categories.map(cat => (
+            <button 
+              key={cat}
+              onClick={() => setFilter(cat)}
+              style={{
+                background: filter === cat ? "var(--primary)" : "transparent",
+                color: filter === cat ? "white" : "var(--foreground)",
+                border: "1px solid var(--primary)",
+                padding: "8px 16px",
+                borderRadius: "20px",
+                cursor: "pointer",
+                fontWeight: "500",
+                transition: "var(--transition)"
+              }}
+            >
+              {cat.replace("_", " ")}
+            </button>
+          ))}
+        </div>
+
+        {loading ? (
+          <p style={{ textAlign: "center" }}>Loading...</p>
+        ) : (
+          <div style={{ display: "grid", gap: "25px" }}>
+            {articles.map((article) => (
+              <div key={article._id} style={{
+                background: "var(--surface)",
+                padding: "30px",
+                borderRadius: "var(--radius)",
+                boxShadow: "var(--shadow-sm)",
+                borderLeft: `5px solid ${article.category === 'FACT_CHECK' ? '#e74c3c' : article.category === 'ALERT' ? '#f59e0b' : 'var(--primary)'}`
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "15px" }}>
+                  <span style={{ fontSize: "0.85rem", fontWeight: "bold", color: "var(--text-muted)", textTransform: "uppercase" }}>
+                    {article.category.replace("_", " ")}
+                  </span>
+                  <span style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>
+                    {new Date(article.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+                <h2 style={{ fontSize: "1.5rem", color: "var(--secondary)", marginBottom: "15px" }}>{article.title}</h2>
+                <p style={{ color: "var(--text-muted)", lineHeight: "1.6" }}>{article.content}</p>
+              </div>
+            ))}
+            
+            {articles.length === 0 && (
+              <p style={{ textAlign: "center", color: "var(--text-muted)" }}>No articles found in this category.</p>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

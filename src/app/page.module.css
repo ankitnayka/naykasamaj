@@ -1,0 +1,95 @@
+.hero {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  color: white;
+  padding: 100px 0;
+  text-align: center;
+}
+
+.heroContent {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.heroTitle {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+  line-height: 1.2;
+}
+
+.heroSubtitle {
+  font-size: 1.25rem;
+  margin-bottom: 40px;
+  opacity: 0.9;
+}
+
+.heroButtons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.btnSecondary {
+  background-color: var(--accent);
+  color: white;
+}
+
+.btnSecondary:hover {
+  background-color: #d97706;
+  color: white;
+}
+
+.section {
+  padding: 80px 0;
+}
+
+.sectionTitle {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 40px;
+  color: var(--secondary);
+}
+
+.missionGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 30px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  border: 1px solid var(--border);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary);
+}
+
+.cardIcon {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  color: var(--primary);
+}
+
+.cardTitle {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  color: var(--secondary);
+}
+
+@media (max-width: 768px) {
+  .heroTitle {
+    font-size: 2.5rem;
+  }
+  .heroButtons {
+    flex-direction: column;
+  }
+}
