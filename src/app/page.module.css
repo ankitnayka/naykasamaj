@@ -43,12 +43,179 @@
   padding: 80px 0;
 }
 
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 40px;
+}
+
 .sectionTitle {
-  text-align: center;
+  font-family: 'Playfair Display', serif;
   font-size: 2.5rem;
   font-weight: 700;
+  color: var(--samaj-maroon);
+  margin: 0;
+  position: relative;
+  padding-bottom: 15px;
+  margin-bottom: 10px;
+}
+
+.sectionTitle::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background-color: var(--samaj-gold);
+}
+
+.sectionTitleCentered {
+  text-align: center;
   margin-bottom: 40px;
+}
+
+.sectionTitleCentered::after {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.viewAll {
+  color: var(--samaj-maroon);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: var(--transition);
+}
+
+.viewAll:hover {
+  color: var(--samaj-gold);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.previewCard {
+  background: white;
+  border-radius: var(--radius);
+  padding: 25px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+  transition: var(--transition);
+}
+
+.previewCardHover {
+  background: white;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+  transition: var(--transition);
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+}
+
+.previewCardHover:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary);
+}
+
+.previewImage {
+  position: relative;
+  width: 100%;
+  height: 200px;
+}
+
+.previewImage img {
+  object-fit: cover;
+}
+
+.cardInfo {
+  padding: 20px;
+}
+
+.tag {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: var(--primary);
+  background: #fff0f0;
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+}
+
+.cardTitle {
+  font-size: 1.25rem;
+  margin-bottom: 10px;
   color: var(--secondary);
+}
+
+.cardText {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+/* Adi Haat Styles */
+.productGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.productCard {
+  background: white;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  transition: var(--transition);
+}
+
+.productCard:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-md);
+}
+
+.productImage {
+  position: relative;
+  width: 100%;
+  height: 200px;
+}
+
+.productImage img {
+  object-fit: cover;
+}
+
+.productInfo {
+  padding: 15px;
+  text-align: center;
+}
+
+.productName {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.productPrice {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.noData {
+  text-align: center;
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 20px;
+  grid-column: 1 / -1;
 }
 
 .missionGrid {
@@ -58,31 +225,32 @@
 }
 
 .card {
-  background: var(--surface);
-  border-radius: var(--radius);
-  padding: 30px;
+  background: #ffffff;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  padding: 30px 20px;
   text-align: center;
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition);
-  border: 1px solid var(--border);
+  transition: 0.3s;
+  height: 100%;
 }
 
 .card:hover {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+  border-color: var(--samaj-gold);
   transform: translateY(-5px);
-  box-shadow: var(--shadow-lg);
-  border-color: var(--primary);
 }
 
 .cardIcon {
-  font-size: 3rem;
-  margin-bottom: 20px;
-  color: var(--primary);
+  font-size: 40px;
+  margin-bottom: 15px;
+  color: var(--samaj-maroon);
 }
 
 .cardTitle {
   font-size: 1.5rem;
   margin-bottom: 15px;
-  color: var(--secondary);
+  color: var(--samaj-maroon);
+  font-family: 'Playfair Display', serif;
 }
 
 @media (max-width: 768px) {

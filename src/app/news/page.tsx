@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
+import ArticleCard from "./ArticleCard";
 
 interface Article {
   _id: string;
@@ -9,6 +10,9 @@ interface Article {
   content: string;
   category: string;
   createdAt: string;
+  images?: string[];
+  gallery?: string[];
+  excerpt?: string;
 }
 
 export default function News() {
@@ -16,12 +20,28 @@ export default function News() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("ALL");
+  const [categories, setCategories] = useState<string[]>(["ALL", "NEWS", "ALERT", "FACT_CHECK", "STATEMENT", "BLOG"]);
 
   const mockNews = [
     { _id: "1", title: "Project Setu Beta Release", content: "We are thrilled to launch the beta version of the Nayka Samaj portal...", category: "NEWS", createdAt: new Date().toISOString() },
     { _id: "2", title: "Fact Check: Scholarship Deadline", content: "Contrary to rumors circulating on WhatsApp, the deadline for the Vidya Scheme has not been extended.", category: "FACT_CHECK", createdAt: new Date(Date.now() - 86400000).toISOString() },
     { _id: "3", title: "President's Address on Foundation Day", content: "Our rich heritage continues to be the bedrock of our modern society...", category: "STATEMENT", createdAt: new Date(Date.now() - 172800000).toISOString() }
   ];
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch("/api/admin/news/categories");
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.length > 0) {
+            setCategories(["ALL", ...data.map((c: any) => c.name.toUpperCase())]);
+          }
+        }
+      } catch (e) {}
+    };
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
     const fetchArticles = async () => {
@@ -43,8 +63,6 @@ export default function News() {
     fetchArticles();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter]);
-
-  const categories = ["ALL", "NEWS", "ALERT", "FACT_CHECK", "STATEMENT", "BLOG"];
 
   return (
     <div className="animate-fade-in" style={{ padding: "60px 0" }}>
@@ -79,24 +97,7 @@ export default function News() {
         ) : (
           <div style={{ display: "grid", gap: "25px" }}>
             {articles.map((article) => (
-              <div key={article._id} style={{
-                background: "var(--surface)",
-                padding: "30px",
-                borderRadius: "var(--radius)",
-                boxShadow: "var(--shadow-sm)",
-                borderLeft: `5px solid ${article.category === 'FACT_CHECK' ? '#e74c3c' : article.category === 'ALERT' ? '#f59e0b' : 'var(--primary)'}`
-              }}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "15px" }}>
-                  <span style={{ fontSize: "0.85rem", fontWeight: "bold", color: "var(--text-muted)", textTransform: "uppercase" }}>
-                    {article.category.replace("_", " ")}
-                  </span>
-                  <span style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>
-                    {new Date(article.createdAt).toLocaleDateString()}
-                  </span>
-                </div>
-                <h2 style={{ fontSize: "1.5rem", color: "var(--secondary)", marginBottom: "15px" }}>{article.title}</h2>
-                <p style={{ color: "var(--text-muted)", lineHeight: "1.6" }}>{article.content}</p>
-              </div>
+              <ArticleCard key={article._id} article={article} />
             ))}
             
             {articles.length === 0 && (

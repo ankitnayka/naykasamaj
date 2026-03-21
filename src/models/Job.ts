@@ -1,6 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
+import { ICMSFeatures, cmsPlugin } from "./plugins/cmsFeatures";
 
-export interface IJob extends Document {
+export interface IJob extends Document, ICMSFeatures {
   title: string;
   company: string;
   location: string;
@@ -8,6 +9,8 @@ export interface IJob extends Document {
   description: string;
   requirements: string[];
   applyLink?: string;
+  contactEmail?: string;
+  contactPhone?: string;
   isSkillDevelopment: boolean;
   postedBy?: mongoose.Types.ObjectId;
   createdAt: Date;
@@ -27,10 +30,14 @@ const JobSchema: Schema = new Schema(
     description: { type: String, required: true },
     requirements: [{ type: String }],
     applyLink: { type: String },
+    contactEmail: { type: String },
+    contactPhone: { type: String },
     isSkillDevelopment: { type: Boolean, default: false },
     postedBy: { type: Schema.Types.ObjectId, ref: "User" },
   },
   { timestamps: true }
 );
+
+JobSchema.plugin(cmsPlugin);
 
 export default mongoose.models.Job || mongoose.model<IJob>("Job", JobSchema);

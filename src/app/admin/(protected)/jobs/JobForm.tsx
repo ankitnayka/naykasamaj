@@ -3,32 +3,67 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function JobForm() {
+export default function JobForm({ existingJob, onSuccess, onCancel }: { existingJob?: any, onSuccess?: (job: any) => void, onCancel?: () => void }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    title: "",
-    company: "",
-    location: "Remote",
-    type: "FULL_TIME",
-    description: "",
-    requirements: "",
-    applyLink: "",
-    isSkillDevelopment: false
+    title: existingJob?.title || "",
+    company: existingJob?.company || "",
+    location: existingJob?.location || "Remote",
+    type: existingJob?.type || "FULL_TIME",
+    description: existingJob?.description || "",
+    requirements: Array.isArray(existingJob?.requirements) ? existingJob.requirements.join("\n") : (existingJob?.requirements || ""),
+    applyLink: existingJob?.applyLink || "",
+    isSkillDevelopment: existingJob?.isSkillDevelopment || false,
+    status: existingJob?.status || "DRAFT",
+    visibility: existingJob?.visibility || "PUBLIC",
+    contactEmail: existingJob?.contactEmail || "",
+    contactPhone: existingJob?.contactPhone || ""
   });
+
+  // Sync state with existingJob when it changes (fixes Edit bug)
+  React.useEffect(() => {
+    if (existingJob) {
+      setFormData({
+        title: existingJob.title || "",
+        company: existingJob.company || "",
+        location: existingJob.location || "Remote",
+        type: existingJob.type || "FULL_TIME",
+        description: existingJob.description || "",
+        requirements: Array.isArray(existingJob.requirements) ? existingJob.requirements.join("\n") : (existingJob.requirements || ""),
+        applyLink: existingJob.applyLink || "",
+        isSkillDevelopment: existingJob.isSkillDevelopment || false,
+        status: existingJob.status || "DRAFT",
+        visibility: existingJob.visibility || "PUBLIC",
+        contactEmail: existingJob.contactEmail || "",
+        contactPhone: existingJob.contactPhone || ""
+      });
+    } else {
+      setFormData({
+        title: "", company: "", location: "Remote", type: "FULL_TIME", description: "", requirements: "", applyLink: "", isSkillDevelopment: false, status: "DRAFT", visibility: "PUBLIC", contactEmail: "", contactPhone: ""
+      });
+    }
+  }, [existingJob]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch("/api/admin/jobs", {
-        method: "POST",
+      const url = existingJob ? `/api/admin/jobs/${existingJob._id}` : "/api/admin/jobs";
+      const method = existingJob ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method: method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)
       });
       if (res.ok) {
-        alert("Opportunity successfully posted!");
-        setFormData({ title: "", company: "", location: "Remote", type: "FULL_TIME", description: "", requirements: "", applyLink: "", isSkillDevelopment: false });
+        const data = await res.json();
+        alert(existingJob ? "Opportunity updated!" : "Opportunity successfully posted!");
+        if (!existingJob) {
+          setFormData({ title: "", company: "", location: "Remote", type: "FULL_TIME", description: "", requirements: "", applyLink: "", isSkillDevelopment: false, status: "DRAFT", visibility: "PUBLIC", contactEmail: "", contactPhone: "" });
+        }
+        if (onSuccess) onSuccess(data.job);
         router.refresh();
       } else {
         const err = await res.json();
@@ -69,9 +104,41 @@ export default function JobForm() {
 
       <input type="url" placeholder="Direct Application URL (Optional)" value={formData.applyLink} onChange={e => setFormData({...formData, applyLink: e.target.value})} style={{ padding: "10px", borderRadius: "4px", border: "1px solid var(--border)" }} />
 
-      <button disabled={loading} type="submit" style={{ background: "var(--primary)", color: "white", padding: "12px", border: "none", borderRadius: "4px", cursor: loading ? "wait" : "pointer", fontWeight: "bold", marginTop: "5px" }}>
-        {loading ? "Posting..." : formData.isSkillDevelopment ? "Publish Program" : "Post Job Listing"}
-      </button>
+      <div style={{ display: "flex", gap: "10px" }}>
+        <input type="email" placeholder="Contact Email (Optional)" value={formData.contactEmail} onChange={e => setFormData({...formData, contactEmail: e.target.value})} style={{ flex: 1, padding: "10px", borderRadius: "4px", border: "1px solid var(--border)" }} />
+        <input type="tel" placeholder="Contact Phone (Optional)" value={formData.contactPhone} onChange={e => setFormData({...formData, contactPhone: e.target.value})} style={{ flex: 1, padding: "10px", borderRadius: "4px", border: "1px solid var(--border)" }} />
+      </div>
+
+      <div style={{ display: "flex", gap: "10px" }}>
+        <div style={{ flex: 1 }}>
+          <label style={{ fontSize: "0.8rem", fontWeight: "bold", display: "block", marginBottom: "5px" }}>Status</label>
+          <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} style={{ width: "100%", padding: "10px", borderRadius: "4px", border: "1px solid var(--border)" }}>
+            <option value="DRAFT">Draft</option>
+            <option value="PENDING_REVIEW">Pending Review</option>
+            <option value="APPROVED">Approved / Live</option>
+            <option value="ARCHIVED">Archived</option>
+          </select>
+        </div>
+        <div style={{ flex: 1 }}>
+          <label style={{ fontSize: "0.8rem", fontWeight: "bold", display: "block", marginBottom: "5px" }}>Visibility</label>
+          <select value={formData.visibility} onChange={e => setFormData({...formData, visibility: e.target.value})} style={{ width: "100%", padding: "10px", borderRadius: "4px", border: "1px solid var(--border)" }}>
+            <option value="PUBLIC">Public</option>
+            <option value="MEMBER_ONLY">Members Only</option>
+            <option value="ADMIN_ONLY">Admin Only</option>
+          </select>
+        </div>
+      </div>
+
+      <div style={{ display: "flex", gap: "10px", marginTop: "5px" }}>
+        <button disabled={loading} type="submit" style={{ flex: 2, background: "var(--primary)", color: "white", padding: "12px", border: "none", borderRadius: "4px", cursor: loading ? "wait" : "pointer", fontWeight: "bold" }}>
+          {loading ? "Saving..." : existingJob ? "Update Listing" : formData.isSkillDevelopment ? "Publish Program" : "Post Job Listing"}
+        </button>
+        {onCancel && (
+          <button type="button" onClick={onCancel} style={{ flex: 1, background: "transparent", border: "1px solid var(--border)", borderRadius: "4px", cursor: "pointer" }}>
+            Cancel
+          </button>
+        )}
+      </div>
     </form>
   );
 }

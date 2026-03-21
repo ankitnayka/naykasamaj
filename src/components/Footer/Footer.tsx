@@ -3,10 +3,14 @@
 import React from "react";
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
+import { usePathname } from "next/navigation";
 import styles from "./Footer.module.css";
 
 const Footer = () => {
+  const pathname = usePathname();
   const { t } = useLanguage();
+
+  if (pathname?.startsWith("/admin")) return null;
 
   return (
     <footer className={styles.footer}>

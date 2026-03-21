@@ -9,13 +9,18 @@ export async function GET(req: Request) {
     await connectDB();
     const { searchParams } = new URL(req.url);
     const category = searchParams.get("category");
+    const location = searchParams.get("location");
 
     let query: any = {};
     if (category && category !== "ALL") query.category = category;
 
-    const products = await Product.find(query)
+    let products = await Product.find(query)
       .sort({ createdAt: -1 })
       .populate("artisanId");
+
+    if (location && location !== "ALL") {
+      products = products.filter((p: any) => p.artisanId?.location === location);
+    }
       
     return NextResponse.json(products);
   } catch (error) {

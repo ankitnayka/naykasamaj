@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useLanguage } from "@/context/LanguageContext";
+import Link from "next/link";
 
 interface Product {
   _id: string;
@@ -12,214 +13,229 @@ interface Product {
   images: string[];
 }
 
+interface Artisan {
+  _id: string;
+  name: string;
+  location: string;
+  craftType: string;
+  bio: string;
+  contactPhone?: string;
+  imageUrl?: string;
+}
+
+interface SuccessStory {
+  _id: string;
+  title: string;
+  artisanName: string;
+  story: string;
+  images: string[];
+  craftType: string;
+  location: string;
+}
+
 export default function AdiHaat() {
   const { t } = useLanguage();
   const [products, setProducts] = useState<Product[]>([]);
-  const [filter, setFilter] = useState("ALL");
+  const [artisans, setArtisans] = useState<Artisan[]>([]);
+  const [stories, setStories] = useState<SuccessStory[]>([]);
+
   const [activeTab, setActiveTab] = useState("PRODUCTS");
+  const [filters, setFilters] = useState({
+    category: "ALL",
+    location: "ALL"
+  });
+
+  const [dynamicFilters, setDynamicFilters] = useState({
+    categories: ["ALL"],
+    locations: ["ALL"]
+  });
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchFilters = async () => {
       try {
-        const query = filter !== "ALL" ? `?category=${filter}` : "";
-        const res = await fetch(`/api/products${query}`);
-        if (res.ok) {
-          const data = await res.json();
-          setProducts(data);
+        const res = await fetch("/api/adi-haat/filters");
+        if (res.ok) setDynamicFilters(await res.json());
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    fetchFilters();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (activeTab === "PRODUCTS") {
+          const params = new URLSearchParams();
+          if (filters.category !== "ALL") params.append("category", filters.category);
+          if (filters.location !== "ALL") params.append("location", filters.location);
+          const res = await fetch(`/api/products?${params.toString()}`);
+          if (res.ok) setProducts(await res.json());
+        } else if (activeTab === "ARTISANS") {
+          const params = new URLSearchParams();
+          if (filters.location !== "ALL") params.append("location", filters.location);
+          const res = await fetch(`/api/artisans?${params.toString()}`);
+          if (res.ok) setArtisans(await res.json());
+        } else if (activeTab === "STORIES") {
+          const res = await fetch(`/api/success-stories`);
+          if (res.ok) setStories(await res.json());
         }
       } catch (e) {
         console.error(e);
       }
     };
-    fetchProducts();
-  }, [filter]);
-
-  const mockProducts: Product[] = [
-    {
-      _id: "p1",
-      name: "Handwoven Bamboo Basket",
-      price: 450,
-      category: "HANDICRAFTS",
-      artisanId: { _id: "a1", name: "Ramesh Nayka", location: "Dang" },
-      images: []
-    },
-    {
-      _id: "p2",
-      name: "Traditional Warli Painting",
-      price: 1200,
-      category: "ART",
-      artisanId: { _id: "a2", name: "Sita Devi", location: "Surat" },
-      images: []
-    },
-    {
-      _id: "p3",
-      name: "Organic Honey",
-      price: 300,
-      category: "FOOD",
-      artisanId: { _id: "a3", name: "Kisan Cooperative", location: "Valsad" },
-      images: []
-    }
-  ];
-
-  const mockArtisans = [
-    { _id: "a1", name: "Ramesh Nayka", location: "Dang", craft: "Bamboo Weaving", bio: "Weaving sustainable household items for over 20 years.", contact: "+91 9876543210" },
-    { _id: "a2", name: "Sita Devi", location: "Surat", craft: "Warli Painting", bio: "Bringing traditional tribal art to modern canvases.", contact: "+91 9876543211" },
-    { _id: "a3", name: "Kisan Cooperative", location: "Valsad", craft: "Organic Farming", bio: "A collective of 15 farmers producing pure forest honey.", contact: "+91 9876543212" }
-  ];
-
-  const mockStories = [
-    { _id: "s1", title: "From Forest to Global Markets", artisanName: "Sita Devi", content: "Sita's Warli paintings, once only adorning her village walls, are now being shipped internationally thanks to the Setu Adi Haat platform..." },
-    { _id: "s2", title: "Reviving Ancient Weaves", artisanName: "Ramesh Nayka", content: "By teaching the younger generation, Ramesh is ensuring that the centuries-old bamboo craft of the Dang region survives and thrives." }
-  ];
-
-  const categories = ["ALL", "HANDICRAFTS", "TEXTILES", "FOOD", "ART"];
-  const displayProducts = products.length > 0 ? products : (filter === "ALL" ? mockProducts : mockProducts.filter(p => p.category === filter));
+    fetchData();
+  }, [activeTab, filters]);
 
   return (
-    <div className="animate-fade-in" style={{ padding: "60px 0", background: "var(--background)" }}>
+    <div className="animate-fade-in" style={{ padding: "20px 0", background: "var(--background)", minHeight: "100vh" }}>
       <div className="container" style={{ maxWidth: "1200px" }}>
-        {/* Header section */}
-        <div style={{ textAlign: "center", marginBottom: "40px" }}>
-          <h1 style={{ fontSize: "3rem", color: "var(--primary)", marginBottom: "15px" }}>Adi Haat</h1>
-          <p style={{ fontSize: "1.2rem", color: "var(--text-muted)", maxWidth: "600px", margin: "0 auto" }}>
-            The official Nayka Samaj Marketplace. Support local artisans and discover authentic traditional crafts, textiles, and organic products.
+        {/* Header - Minimalist */}
+        <div style={{ textAlign: "center", marginBottom: "15px" }}>
+          <h1 style={{ fontSize: "1.2rem", color: "var(--primary)", marginBottom: "2px" }}>Adi Haat</h1>
+          <p style={{ fontSize: "0.8rem", color: "var(--text-muted)", margin: "0" }}>
+            The Premium Tribal Marketplace of the Nayka Community.
           </p>
         </div>
 
-        {/* Top Navigation Tabs */}
-        <div style={{ display: "flex", justifyContent: "center", gap: "15px", marginBottom: "40px" }}>
-          {["PRODUCTS", "ARTISANS", "STORIES"].map(tab => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              style={{
-                padding: "10px 25px",
-                borderRadius: "30px",
-                border: "none",
-                background: activeTab === tab ? "var(--primary)" : "var(--surface)",
-                color: activeTab === tab ? "white" : "var(--foreground)",
-                fontWeight: activeTab === tab ? "bold" : "normal",
-                boxShadow: "var(--shadow-sm)",
-                cursor: "pointer",
-                transition: "all 0.3s"
-              }}
-            >
-              {tab === "STORIES" ? "Success Stories" : tab === "ARTISANS" ? "Artisan Directory" : "Products"}
-            </button>
-          ))}
-        </div>
+        {/* Tabs & Filters - Ultra Compact */}
+        <div style={{ background: "var(--surface)", padding: "8px 15px", borderRadius: "10px", boxShadow: "var(--shadow-sm)", marginBottom: "20px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
 
-        {activeTab === "PRODUCTS" && (
-          <>
-            {/* Filter */}
-            <div style={{ display: "flex", gap: "15px", justifyContent: "center", marginBottom: "40px", flexWrap: "wrap" }}>
-          {categories.map(cat => (
-            <button
-              key={cat}
-              onClick={() => setFilter(cat)}
-              style={{
-                padding: "8px 20px",
-                borderRadius: "30px",
-                border: "none",
-                background: filter === cat ? "var(--primary)" : "var(--surface)",
-                color: filter === cat ? "white" : "var(--foreground)",
-                boxShadow: "var(--shadow-sm)",
-                cursor: "pointer",
-                fontWeight: filter === cat ? "bold" : "normal",
-                transition: "all 0.3s"
-              }}
-            >
-              {cat === "ALL" ? "All Products" : cat}
-            </button>
-          ))}
-        </div>
-
-        {/* Product Grid */}
-        <div style={{ 
-          display: "grid", 
-          gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", 
-          gap: "30px" 
-        }}>
-          {displayProducts.map((product) => (
-            <div key={product._id} style={{
-              background: "var(--surface)",
-              borderRadius: "var(--radius)",
-              overflow: "hidden",
-              boxShadow: "var(--shadow-sm)",
-              transition: "transform 0.3s",
-              cursor: "pointer"
-            }}
-            onMouseOver={(e) => e.currentTarget.style.transform = "translateY(-5px)"}
-            onMouseOut={(e) => e.currentTarget.style.transform = "translateY(0)"}
-            >
-              <div style={{ height: "200px", background: "#eaeaea", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
-                <span style={{ fontSize: "3rem" }}>
-                  {product.category === "HANDICRAFTS" ? "🧺" : product.category === "ART" ? "🖼️" : product.category === "FOOD" ? "🍯" : "🧶"}
-                </span>
-              </div>
-              <div style={{ padding: "20px" }}>
-                <div style={{ fontSize: "0.8rem", color: "var(--accent)", fontWeight: "bold", marginBottom: "5px" }}>
-                  {product.category}
-                </div>
-                <h3 style={{ margin: "0 0 10px 0", color: "var(--secondary)", fontSize: "1.3rem" }}>{product.name}</h3>
-                <div style={{ color: "var(--text-muted)", fontSize: "0.9rem", marginBottom: "15px" }}>
-                  By <strong>{product.artisanId.name}</strong> • {product.artisanId.location}
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span style={{ fontSize: "1.2rem", fontWeight: "bold", color: "var(--primary)" }}>₹{product.price}</span>
-                  <button className="btn" style={{ padding: "6px 15px", fontSize: "0.9rem" }}>Contact Artisan</button>
-                </div>
-              </div>
+            <div style={{ display: "flex", gap: "4px", background: "rgba(0,0,0,0.05)", padding: "3px", borderRadius: "30px" }}>
+              {[
+                { id: "PRODUCTS", label: "Market", icon: "🏺" },
+                { id: "ARTISANS", label: "Artisans", icon: "🎨" },
+                { id: "STORIES", label: "Stories", icon: "📜" }
+              ].map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  style={{
+                    padding: "5px 12px",
+                    borderRadius: "30px",
+                    border: "none",
+                    background: activeTab === tab.id ? "var(--primary)" : "transparent",
+                    color: activeTab === tab.id ? "white" : "var(--foreground)",
+                    fontWeight: "bold",
+                    cursor: "pointer",
+                    fontSize: "0.75rem",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "5px"
+                  }}
+                >
+                  <span>{tab.icon}</span> {tab.label}
+                </button>
+              ))}
             </div>
-          ))}
-        </div>
-        </>
-      )}
 
-        {activeTab === "ARTISANS" && (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "30px" }}>
-            {mockArtisans.map((art) => (
-              <div key={art._id} style={{ background: "var(--surface)", borderRadius: "var(--radius)", padding: "25px", boxShadow: "var(--shadow-sm)", borderLeft: "4px solid var(--accent)" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "15px", marginBottom: "15px" }}>
-                  <div style={{ width: "60px", height: "60px", borderRadius: "50%", background: "var(--primary)", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.5rem", fontWeight: "bold" }}>
-                    {art.name.charAt(0)}
+            <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+              {activeTab === "PRODUCTS" && (
+                <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                  <label style={{ fontSize: "0.7rem", color: "var(--text-muted)" }}>category:</label>
+                  <select
+                    value={filters.category}
+                    onChange={(e) => setFilters({ ...filters, category: e.target.value })}
+                    style={{ padding: "4px 8px", borderRadius: "5px", border: "1px solid var(--border)", fontSize: "0.75rem", outline: "none" }}
+                  >
+                    {dynamicFilters.categories.map(cat => <option key={cat} value={cat}>{cat === "ALL" ? "All" : cat}</option>)}
+                  </select>
+                </div>
+              )}
+              {(activeTab === "ARTISANS" || activeTab === "PRODUCTS") && (
+                <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                  <label style={{ fontSize: "0.7rem", color: "var(--text-muted)" }}>Location:</label>
+                  <select
+                    value={filters.location}
+                    onChange={(e) => setFilters({ ...filters, location: e.target.value })}
+                    style={{ padding: "4px 8px", borderRadius: "5px", border: "1px solid var(--border)", fontSize: "0.75rem", outline: "none" }}
+                  >
+                    {dynamicFilters.locations.map(loc => <option key={loc} value={loc}>{loc === "ALL" ? "All" : loc}</option>)}
+                  </select>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Content Area */}
+        <div>
+          {activeTab === "PRODUCTS" && (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "15px" }}>
+              {products.map((product) => (
+                <div key={product._id} style={{ background: "var(--surface)", borderRadius: "10px", overflow: "hidden", border: "1px solid var(--border)", transition: "transform 0.2s" }}>
+                  <div style={{ height: "160px", background: "#f0f0f0" }}>
+                    {product.images?.[0] ? (
+                      <img src={product.images[0]} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt={product.name} />
+                    ) : (
+                      <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2rem" }}>🏺</div>
+                    )}
                   </div>
-                  <div>
-                    <h3 style={{ margin: "0 0 5px 0", fontSize: "1.3rem", color: "var(--secondary)" }}>{art.name}</h3>
-                    <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", display: "flex", gap: "10px" }}>
-                      <span>📍 {art.location}</span>
-                      <span>🛠️ {art.craft}</span>
+                  <div style={{ padding: "12px" }}>
+                    <div style={{ fontSize: "0.6rem", color: "var(--primary)", fontWeight: "bold", textTransform: "uppercase", marginBottom: "3px" }}>{product.category}</div>
+                    <h3 style={{ margin: "0 0 5px 0", color: "var(--secondary)", fontSize: "1rem" }}>{product.name}</h3>
+                    <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginBottom: "10px" }}>
+                      By {product.artisanId?.name} • {product.artisanId?.location}
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span style={{ fontSize: "1rem", fontWeight: "bold", color: "var(--primary)" }}>₹{product.price}</span>
+                      <Link href={`/adi-haat/product/${product._id}`} className="btn" style={{ padding: "5px 10px", fontSize: "0.7rem", textDecoration: "none" }}>Details</Link>
                     </div>
                   </div>
                 </div>
-                <p style={{ color: "var(--foreground)", fontSize: "0.95rem", marginBottom: "20px", lineHeight: "1.5" }}>{art.bio}</p>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid var(--border)", paddingTop: "15px" }}>
-                  <span style={{ fontSize: "0.9rem", color: "var(--text-muted)", fontWeight: "500" }}>📞 {art.contact}</span>
-                  <button className="btn" style={{ padding: "6px 15px", fontSize: "0.85rem" }}>Message</button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
 
-        {activeTab === "STORIES" && (
-          <div style={{ maxWidth: "800px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "30px" }}>
-            {mockStories.map(story => (
-              <div key={story._id} style={{ background: "var(--surface)", borderRadius: "var(--radius)", overflow: "hidden", boxShadow: "var(--shadow-md)" }}>
-                <div style={{ height: "150px", background: "linear-gradient(135deg, var(--primary), var(--accent))", display: "flex", alignItems: "flex-end", padding: "20px" }}>
-                  <span style={{ background: "white", color: "var(--primary)", padding: "4px 12px", borderRadius: "20px", fontSize: "0.8rem", fontWeight: "bold" }}>
-                    Artisan Spotlight: {story.artisanName}
-                  </span>
+          {activeTab === "ARTISANS" && (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: "15px" }}>
+              {artisans.map((artisan) => (
+                <div key={artisan._id} style={{ background: "var(--surface)", borderRadius: "10px", padding: "15px", border: "1px solid var(--border)", display: "flex", flexDirection: "column", gap: "10px" }}>
+                  <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+                    {artisan.imageUrl ? (
+                      <img src={artisan.imageUrl} style={{ width: "45px", height: "45px", borderRadius: "50%", objectFit: "cover" }} alt={artisan.name} />
+                    ) : (
+                      <div style={{ width: "45px", height: "45px", borderRadius: "50%", background: "var(--primary)", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontSize: "1rem" }}>{artisan.name[0]}</div>
+                    )}
+                    <div>
+                      <h4 style={{ margin: 0, fontSize: "0.95rem" }}>{artisan.name}</h4>
+                      <div style={{ fontSize: "0.75rem", color: "var(--primary)", fontWeight: "bold" }}>{artisan.craftType}</div>
+                      <div style={{ fontSize: "0.7rem", color: "var(--text-muted)" }}>📍 {artisan.location}</div>
+                    </div>
+                  </div>
+                  <p style={{ fontSize: "0.8rem", color: "var(--foreground)", lineHeight: "1.4", margin: "0", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{artisan.bio}</p>
+                  <Link href={`/adi-haat/artisan/${artisan._id}`} className="btn" style={{ width: "100%", padding: "6px", fontSize: "0.75rem", marginTop: "auto", display: "block", textAlign: "center", textDecoration: "none" }}>Portfolio</Link>
                 </div>
-                <div style={{ padding: "30px" }}>
-                  <h2 style={{ fontSize: "1.8rem", color: "var(--secondary)", margin: "0 0 15px 0" }}>{story.title}</h2>
-                  <p style={{ color: "var(--foreground)", fontSize: "1.05rem", lineHeight: "1.7" }}>{story.content}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
 
+          {activeTab === "STORIES" && (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "20px" }}>
+              {stories.map(story => (
+                <div key={story._id} style={{ background: "var(--surface)", borderRadius: "10px", overflow: "hidden", display: "flex", flexDirection: "column", border: "1px solid var(--border)" }}>
+                  <div style={{ height: "150px" }}>
+                    {story.images?.[0] ? (
+                      <img src={story.images[0]} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt={story.title} />
+                    ) : (
+                      <div style={{ height: "100%", background: "var(--primary)", opacity: 0.1 }}></div>
+                    )}
+                  </div>
+                  <div style={{ padding: "15px", flex: 1, display: "flex", flexDirection: "column" }}>
+                    <div style={{ color: "var(--primary)", fontWeight: "bold", fontSize: "0.6rem", textTransform: "uppercase", marginBottom: "5px" }}>Success Story</div>
+                    <h3 style={{ fontSize: "1.1rem", marginBottom: "10px", color: "var(--secondary)" }}>{story.title}</h3>
+                    <p style={{ fontSize: "0.85rem", lineHeight: "1.5", color: "var(--text-muted)", marginBottom: "15px", display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{story.story}</p>
+                    <div style={{ marginTop: "auto", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span style={{ fontSize: "0.75rem" }}>🎨 {story.craftType}</span>
+                      <Link href={`/success-stories/${story._id}`} style={{ fontWeight: "bold", color: "var(--primary)", textDecoration: "none", fontSize: "0.8rem" }}>Read More →</Link>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

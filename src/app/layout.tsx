@@ -6,20 +6,27 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import AuthProvider from "@/context/AuthProvider";
 import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
+import TopBar from "@/components/TopBar/TopBar";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+import { Roboto, Playfair_Display } from "next/font/google";
+
+const roboto = Roboto({
+  weight: ["400", "500", "700"],
   subsets: ["latin"],
+  variable: "--font-roboto",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const playfair = Playfair_Display({
   subsets: ["latin"],
+  variable: "--font-playfair",
 });
 
 export const metadata: Metadata = {
   title: "Nayka Samaj",
   description: "A community platform to empower, connect, and support members of the Nayka community.",
+  icons: {
+    icon: "/logo.jpeg",
+  },
 };
 
 export default function RootLayout({
@@ -28,11 +35,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${roboto.variable} ${playfair.variable}`} suppressHydrationWarning>
       <body suppressHydrationWarning>
         <AuthProvider>
           <ThemeProvider>
             <LanguageProvider>
+              <TopBar />
               <Navbar />
               <main>{children}</main>
               <Footer />

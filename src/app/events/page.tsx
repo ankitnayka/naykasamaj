@@ -1,61 +1,93 @@
 "use client";
 
+import React, { useEffect, useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
+import EventCard from "./EventCard";
 
 export default function Events() {
   const { t } = useLanguage();
+  const [events, setEvents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("ALL");
+  const [categories, setCategories] = useState<string[]>(["ALL", "CULTURAL", "MEETING", "WORKSHOP", "HEALTH_DRIVE"]);
 
-  const events = [
-    { id: 1, title: "Annual General Meeting 2026", date: "April 15, 2026", type: "Meeting", status: "Upcoming" },
-    { id: 2, title: "Navratri Cultural Festival", date: "October 10, 2026", type: "Cultural", status: "Upcoming" },
-    { id: 3, title: "Youth Education Seminar", date: "June 05, 2026", type: "Education", status: "Upcoming" },
-    { id: 4, title: "Community Health Drive", date: "January 20, 2026", type: "Welfare", status: "Completed" },
-  ];
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch("/api/admin/events/categories");
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.length > 0) {
+            setCategories(["ALL", ...data.map((c: any) => c.name.toUpperCase())]);
+          }
+        }
+      } catch (e) {}
+    };
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      setLoading(true);
+      try {
+        const query = filter !== "ALL" ? `?category=${filter}` : "";
+        const res = await fetch(`/api/admin/events${query}`);
+        if (res.ok) {
+          const data = await res.json();
+          setEvents(data);
+        } else {
+          setEvents([]);
+        }
+      } catch (e) {
+        setEvents([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchEvents();
+  }, [filter]);
 
   return (
     <div className="animate-fade-in" style={{ padding: "60px 0" }}>
-      <div className="container">
-        <h1 style={{ fontSize: "2.5rem", color: "var(--primary)", marginBottom: "40px", textAlign: "center" }}>
-          {t.nav.events}
+      <div className="container" style={{ maxWidth: "1000px" }}>
+        <h1 style={{ fontSize: "2.5rem", color: "var(--primary)", marginBottom: "30px", textAlign: "center" }}>
+          {t?.nav?.events || "Community Events"}
         </h1>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "30px" }}>
-          {events.map((event) => (
-            <div key={event.id} style={{ 
-              background: "var(--surface)", 
-              padding: "25px", 
-              borderRadius: "var(--radius)", 
-              boxShadow: "var(--shadow-md)",
-              borderTop: `4px solid ${event.status === 'Upcoming' ? 'var(--primary)' : 'var(--text-muted)'}`,
-              transition: "var(--transition)",
-            }}
-            className="card-hover">
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" }}>
-                <span style={{ 
-                  background: event.status === 'Upcoming' ? 'rgba(242, 101, 34, 0.1)' : 'rgba(102, 102, 102, 0.1)', 
-                  color: event.status === 'Upcoming' ? 'var(--primary)' : 'var(--text-muted)',
-                  padding: "5px 12px", 
-                  borderRadius: "20px", 
-                  fontSize: "0.85rem",
-                  fontWeight: "600"
-                }}>
-                  {event.status}
-                </span>
-                <span style={{ fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: "500" }}>{event.type}</span>
-              </div>
-              <h3 style={{ fontSize: "1.3rem", color: "var(--secondary)", marginBottom: "10px" }}>{event.title}</h3>
-              <p style={{ color: "var(--text-muted)", marginBottom: "20px", display: "flex", alignItems: "center", gap: "8px" }}>
-                📅 {event.date}
-              </p>
-              <button style={{ width: "100%", padding: "10px", background: "transparent", border: "1px solid var(--primary)", color: "var(--primary)", borderRadius: "var(--radius)", cursor: "pointer", fontWeight: "600", transition: "var(--transition)" }}
-                onMouseOver={(e) => { e.currentTarget.style.background = 'var(--primary)'; e.currentTarget.style.color = 'white'; }}
-                onMouseOut={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--primary)'; }}
-              >
-                {t.common.readMore}
-              </button>
-            </div>
+        <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", justifyContent: "center", marginBottom: "40px" }}>
+          {categories.map(cat => (
+            <button 
+              key={cat}
+              onClick={() => setFilter(cat)}
+              style={{
+                background: filter === cat ? "var(--primary)" : "transparent",
+                color: filter === cat ? "white" : "var(--foreground)",
+                border: "1px solid var(--primary)",
+                padding: "8px 16px",
+                borderRadius: "20px",
+                cursor: "pointer",
+                fontWeight: "500",
+                transition: "var(--transition)"
+              }}
+            >
+              {cat.replace("_", " ")}
+            </button>
           ))}
         </div>
+
+        {loading ? (
+          <p style={{ textAlign: "center" }}>Loading...</p>
+        ) : (
+          <div style={{ display: "grid", gap: "25px" }}>
+            {events.map((event) => (
+              <EventCard key={event._id} event={event} />
+            ))}
+            
+            {events.length === 0 && (
+              <p style={{ textAlign: "center", color: "var(--text-muted)" }}>No events found in this category.</p>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -4,6 +4,21 @@ import { authOptions } from "@/lib/auth";
 import connectDB from "@/lib/db";
 import Job from "@/models/Job";
 
+export async function GET(req: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || !["ADMIN", "MODERATOR"].includes(session.user.role)) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    await connectDB();
+    const jobs = await Job.find().sort({ createdAt: -1 });
+    return NextResponse.json(jobs);
+  } catch (error) {
+    return NextResponse.json({ error: "Server Error" }, { status: 500 });
+  }
+}
+
 export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
@@ -11,7 +26,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { title, company, location, type, description, requirements, applyLink, isSkillDevelopment } = await req.json();
+    const { title, company, location, type, description, requirements, applyLink, isSkillDevelopment, contactEmail, contactPhone } = await req.json();
 
     if (!title || !company || !location || !type || !description) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -34,6 +49,8 @@ export async function POST(req: Request) {
       description,
       requirements: parsedRequirements,
       applyLink,
+      contactEmail,
+      contactPhone,
       isSkillDevelopment: !!isSkillDevelopment,
       postedBy: session.user.id === "admin-global" ? undefined : session.user.id
     });

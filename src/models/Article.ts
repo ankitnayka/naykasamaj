@@ -1,12 +1,15 @@
 import mongoose, { Schema, Document } from "mongoose";
+import { ICMSFeatures, cmsPlugin } from "./plugins/cmsFeatures";
 
-export interface IArticle extends Document {
+export interface IArticle extends Document, ICMSFeatures {
   title: string;
   content: string;
   excerpt?: string;
-  category: "NEWS" | "ALERT" | "FACT_CHECK" | "STATEMENT" | "BLOG";
+  category: string;
   tags: string[];
   imageUrl?: string;
+  images?: string[];
+  gallery?: string[];
   authorId?: mongoose.Types.ObjectId;
   isPublished: boolean;
   publishedAt?: Date;
@@ -21,16 +24,19 @@ const ArticleSchema: Schema = new Schema(
     excerpt: { type: String },
     category: {
       type: String,
-      enum: ["NEWS", "ALERT", "FACT_CHECK", "STATEMENT", "BLOG"],
-      default: "NEWS",
+      default: "News",
     },
     tags: [{ type: String }],
     imageUrl: { type: String },
+    images: [{ type: String }],
+    gallery: [{ type: String }],
     authorId: { type: Schema.Types.ObjectId, ref: "User" },
     isPublished: { type: Boolean, default: false },
     publishedAt: { type: Date },
   },
   { timestamps: true }
 );
+
+ArticleSchema.plugin(cmsPlugin);
 
 export default mongoose.models.Article || mongoose.model<IArticle>("Article", ArticleSchema);
