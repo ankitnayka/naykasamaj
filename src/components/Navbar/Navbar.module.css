@@ -99,7 +99,22 @@
   padding: 0;
 }
 
+.mobileActions {
+  display: none;
+}
+
 @media (max-width: 992px) {
+  .mobileActions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .actionGroup .langToggle,
+  .actionGroup .themeToggle {
+    display: none; /* Already in mobile actions or not needed inside menu */
+  }
+
   .nav {
     position: absolute;
     top: 70px;

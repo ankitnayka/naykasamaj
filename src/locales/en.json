@@ -16,7 +16,8 @@
     "schemes": "Schemes",
     "marketplace": "Adi Haat",
     "gallery": "Gallery",
-    "contact": "Contact"
+    "contact": "Contact",
+    "app": "App"
   },
   "home": {
     "heroTitle": "Empowering the Nayka Community",
@@ -24,7 +25,21 @@
     "joinUs": "Join the Community",
     "supportUs": "Support Our Cause",
     "missionTitle": "Our Mission",
-    "missionDesc": "To strengthen unity within the Nayka Samaj, promote education, and preserve cultural values."
+    "missionDesc": "To strengthen unity within the Nayka Samaj, promote education, and preserve cultural values.",
+    "slides": [
+      {
+        "title": "Empowering Nayka Community",
+        "subtitle": "Connecting hearts, preserving heritage, and building a brighter future together."
+      },
+      {
+        "title": "Cultural Excellence",
+        "subtitle": "Celebrating our rich traditions and passing them to the next generation."
+      },
+      {
+        "title": "Stronger Together",
+        "subtitle": "Support, growth, and unity for every member of our community."
+      }
+    ]
   },
   "footer": {
     "copyright": "© 2026 Nayka Samaj. All rights reserved.",

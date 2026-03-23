@@ -45,9 +45,9 @@ const Navbar = () => {
           </Link>
 
           <nav className={`${styles.nav} ${isMenuOpen ? styles.open : ""}`}>
-            <Link href="/" className={styles.navItem} onClick={() => setIsMenuOpen(false)}>Home</Link>
-            <Link href="/about" className={styles.navItem} onClick={() => setIsMenuOpen(false)}>About Us</Link>
-            <Link href="/contact" className={styles.navItem} onClick={() => setIsMenuOpen(false)}>Contact Us</Link>
+            <Link href="/" className={styles.navItem} onClick={() => setIsMenuOpen(false)}>{t.nav.home}</Link>
+            <Link href="/about" className={styles.navItem} onClick={() => setIsMenuOpen(false)}>{t.nav.about}</Link>
+            <Link href="/contact" className={styles.navItem} onClick={() => setIsMenuOpen(false)}>{t.nav.contact}</Link>
             <Link
               href="https://play.google.com/store/apps/details?id=com.directory.nayakasamaj"
               target="_blank"
@@ -55,7 +55,7 @@ const Navbar = () => {
               className={styles.navItem}
               onClick={() => setIsMenuOpen(false)}
             >
-              App
+              {t.nav.app}
             </Link>
 
             <div className={styles.actionGroup}>
@@ -94,12 +94,18 @@ const Navbar = () => {
             </div>
           </nav>
 
-          <button
-            className={styles.mobileMenuToggle}
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? "✕" : "☰"}
-          </button>
+          <div className={styles.mobileActions}>
+            <button className={styles.langToggle} onClick={toggleLanguage}>
+              {language === "en" ? "GUJ" : "ENG"}
+            </button>
+
+            <button
+              className={styles.mobileMenuToggle}
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              {isMenuOpen ? "✕" : "☰"}
+            </button>
+          </div>
         </div>
       </header>
 

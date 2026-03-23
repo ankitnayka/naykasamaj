@@ -23,7 +23,7 @@ interface LanguageContextProps {
 const LanguageContext = createContext<LanguageContextProps | undefined>(undefined);
 
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
-  const [language, setLanguage] = useState<Language>("en");
+  const [language, setLanguage] = useState<Language>("gu");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -49,7 +49,7 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   // Render dummy on server to avoid hydration mismatch if needed
   if (!mounted) {
     return (
-      <LanguageContext.Provider value={{ language: "en", setLanguage: handleSetLanguage, t: en, toggleLanguage }}>
+      <LanguageContext.Provider value={{ language: "gu", setLanguage: handleSetLanguage, t: gu, toggleLanguage }}>
         {children}
       </LanguageContext.Provider>
     );
