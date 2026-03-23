@@ -218,46 +218,91 @@
   grid-column: 1 / -1;
 }
 
-.missionGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 30px;
-}
 
-.card {
-  background: #ffffff;
-  border: 1px solid #eaeaea;
-  border-radius: 8px;
-  padding: 30px 20px;
+.appPromo {
+  padding: 80px 0;
+  background-color: #800020;
+  color: white;
   text-align: center;
-  transition: 0.3s;
-  height: 100%;
 }
 
-.card:hover {
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
-  border-color: var(--samaj-gold);
-  transform: translateY(-5px);
-}
-
-.cardIcon {
-  font-size: 40px;
-  margin-bottom: 15px;
-  color: var(--samaj-maroon);
-}
-
-.cardTitle {
-  font-size: 1.5rem;
-  margin-bottom: 15px;
-  color: var(--samaj-maroon);
+.promoTitle {
   font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  line-height: 1.2;
+}
+
+.promoDesc {
+  font-size: 1.1rem;
+  max-width: 800px;
+  margin: 0 auto 40px;
+  line-height: 1.6;
+  opacity: 0.9;
+}
+
+.promoButtons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btnApp {
+  background-color: #000;
+  color: white;
+  padding: 12px 30px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.btnApp:hover {
+  background-color: #1a1a1a;
+  border-color: white;
+  transform: translateY(-2px);
+  color: white;
 }
 
 @media (max-width: 768px) {
+  .section {
+    padding: 50px 0;
+  }
   .heroTitle {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
   }
   .heroButtons {
     flex-direction: column;
+    gap: 15px;
+  }
+  .appPromo {
+    padding: 60px 20px;
+  }
+  .promoTitle {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+  }
+  .promoDesc {
+    font-size: 1rem;
+    margin-bottom: 30px;
+  }
+  .promoButtons {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+  }
+  .btnApp {
+    width: 100%;
+    max-width: 300px;
+    justify-content: center;
+    padding: 15px;
+    font-size: 1rem;
   }
 }

@@ -23,7 +23,7 @@ export default function Contact() {
               <div style={{ width: "40px", height: "40px", borderRadius: "50%", background: "rgba(242, 101, 34, 0.1)", color: "var(--primary)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.2rem" }}>📍</div>
               <div>
                 <h4 style={{ margin: 0, color: "var(--secondary)", fontSize: "1.1rem" }}>Office Address</h4>
-                <p style={{ margin: 0, color: "var(--text-muted)", fontSize: "0.95rem" }}>123 Samaj Bhavan, Gujarat, India</p>
+                <p style={{ margin: 0, color: "var(--text-muted)", fontSize: "0.95rem" }}>અટલ બિહારી બાજપાઈ શોપીંગ સેન્ટર,પહેલો માળ-દુકાન નં-૩૮,લુન્સીકુઈ,પારસી હોસ્પિટલ સામે,નવસારી</p>
               </div>
             </div>
 
@@ -31,7 +31,7 @@ export default function Contact() {
               <div style={{ width: "40px", height: "40px", borderRadius: "50%", background: "rgba(242, 101, 34, 0.1)", color: "var(--primary)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.2rem" }}>📞</div>
               <div>
                 <h4 style={{ margin: 0, color: "var(--secondary)", fontSize: "1.1rem" }}>Phone</h4>
-                <p style={{ margin: 0, color: "var(--text-muted)", fontSize: "0.95rem" }}>+91 98765 43210</p>
+                <p style={{ margin: 0, color: "var(--text-muted)", fontSize: "0.95rem" }}>+91 63526 34804</p>
               </div>
             </div>
 

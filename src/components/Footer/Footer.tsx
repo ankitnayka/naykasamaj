@@ -25,18 +25,18 @@ const Footer = () => {
           <ul>
             <li><Link href="/">{t.nav.home}</Link></li>
             <li><Link href="/about">{t.nav.about}</Link></li>
-            <li><Link href="/events">{t.nav.events}</Link></li>
-            <li><Link href="/gallery">{t.nav.gallery}</Link></li>
+            {/* <li><Link href="/events">{t.nav.events}</Link></li> */}
+            {/* <li><Link href="/gallery">{t.nav.gallery}</Link></li> */}
           </ul>
         </div>
 
         <div className={styles.supportSection}>
-          <h3>Support</h3>
+          {/* <h3>Support</h3> */}
           <ul>
-            <li><Link href="/schemes">{t.nav.schemes}</Link></li>
-            <li><Link href="/jobs">{t.nav.jobs}</Link></li>
-            <li><Link href="/donate">{t.common.donate}</Link></li>
-            <li><Link href="/register">{t.common.register}</Link></li>
+            {/* <li><Link href="/schemes">{t.nav.schemes}</Link></li> */}
+            {/* <li><Link href="/jobs">{t.nav.jobs}</Link></li> */}
+            {/* <li><Link href="/donate">{t.common.donate}</Link></li> */}
+            {/* <li><Link href="/register">{t.common.register}</Link></li> */}
           </ul>
         </div>
 
@@ -49,7 +49,7 @@ const Footer = () => {
           </ul>
         </div>
       </div>
-      
+
       <div className={styles.bottomBar}>
         <div className="container">
           <p>{t.footer.copyright}</p>

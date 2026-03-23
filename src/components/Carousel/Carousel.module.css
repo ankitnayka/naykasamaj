@@ -137,12 +137,22 @@
 
 @media (max-width: 768px) {
   .carousel {
-    height: 400px;
+    height: 480px;
   }
   .title {
-    font-size: 2rem;
+    font-size: 1.8rem;
+    margin-bottom: 10px;
   }
   .subtitle {
-    font-size: 1rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+  .content {
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 85%;
+  }
+  .controls {
+    display: none; /* Rely on indicators and touch for mobile */
   }
 }
