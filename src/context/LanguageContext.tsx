@@ -9,7 +9,7 @@ type Language = "en" | "gu";
 interface Translations {
   common: Record<string, string>;
   nav: Record<string, string>;
-  home: Record<string, string>;
+  home: Record<string, any>;
   footer: Record<string, string>;
 }
 
@@ -44,12 +44,12 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
     handleSetLanguage(language === "en" ? "gu" : "en");
   };
 
-  const translations = language === "en" ? en : gu;
+  const translations = (language === "en" ? en : gu) as unknown as Translations;
 
   // Render dummy on server to avoid hydration mismatch if needed
   if (!mounted) {
     return (
-      <LanguageContext.Provider value={{ language: "gu", setLanguage: handleSetLanguage, t: gu, toggleLanguage }}>
+      <LanguageContext.Provider value={{ language: "gu", setLanguage: handleSetLanguage, t: gu as unknown as Translations, toggleLanguage }}>
         {children}
       </LanguageContext.Provider>
     );
