@@ -306,3 +306,71 @@
     font-size: 1rem;
   }
 }
+
+.missionGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 30px;
+  margin-top: 50px;
+}
+
+.missionItem {
+  background: #fdfdfd;
+  padding: 30px;
+  border-radius: 12px;
+  border-left: 5px solid var(--samaj-maroon);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease;
+  height: 100%;
+}
+
+.missionItem:hover {
+  transform: translateY(-5px);
+  background: #fff;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.missionItemTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--samaj-maroon);
+  margin-bottom: 15px;
+  line-height: 1.4;
+  font-family: 'Roboto', sans-serif; /* Using Roboto for clearer text in Gujarati */
+}
+
+.missionItemDesc {
+  font-size: 1rem;
+  color: #555;
+  line-height: 1.8;
+  text-align: justify;
+}
+
+.missionPreamble {
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--samaj-gold);
+  margin-bottom: 30px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+@media (max-width: 768px) {
+  .missionGrid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .missionItem {
+    padding: 20px;
+  }
+  .missionItemTitle {
+    font-size: 1.15rem;
+  }
+}
+

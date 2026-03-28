@@ -1,0 +1,33 @@
+.contactGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+.mapGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 30px;
+}
+
+@media (max-width: 768px) {
+  .contactGrid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding: 0 5px;
+  }
+  
+  .contactGrid > div:first-child {
+    text-align: center;
+  }
+
+  .contactGrid div[style*="display: flex"] {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .mapGrid {
+    grid-template-columns: 1fr;
+    padding: 0 5px;
+  }
+}

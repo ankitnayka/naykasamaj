@@ -11,6 +11,7 @@ interface Translations {
   nav: Record<string, string>;
   home: Record<string, any>;
   footer: Record<string, string>;
+  appDownload: Record<string, string>;
 }
 
 interface LanguageContextProps {

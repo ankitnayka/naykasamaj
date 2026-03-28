@@ -18,11 +18,24 @@ export default function Home() {
       <section className={styles.section} style={{ background: "#fff", borderBottom: "1px solid var(--border)" }}>
         <div className="container">
           <h2 className={`${styles.sectionTitle} ${styles.sectionTitleCentered}`}>{t.home.missionTitle}</h2>
-          <p style={{ textAlign: "center", maxWidth: "800px", margin: "0 auto 50px", fontSize: "1.1rem" }}>
+          <p style={{ textAlign: "center", maxWidth: "800px", margin: "0 auto 30px", fontSize: "1.1rem" }}>
             {t.home.missionDesc}
           </p>
 
-          <ProgressReport />
+          <div className={styles.missionPreamble}>
+            {/* {t.home.missionPreamble} */}
+          </div>
+
+          <div className={styles.missionGrid}>
+            {t.home.missionItems && t.home.missionItems.map((item: any, index: number) => (
+              <div key={index} className={styles.missionItem}>
+                <h3 className={styles.missionItemTitle}>{item.title}</h3>
+                <p className={styles.missionItemDesc}>{item.description}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* <ProgressReport /> */}
         </div>
       </section>
 

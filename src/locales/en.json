@@ -26,6 +26,45 @@
     "supportUs": "Support Our Cause",
     "missionTitle": "Our Mission",
     "missionDesc": "To strengthen unity within the Nayka Samaj, promote education, and preserve cultural values.",
+    "missionPreamble": "This is a very great initiative 👏",
+    "missionItems": [
+      {
+        "title": "Matrimonial Introduction and Selection Fair/Convention",
+        "description": "The main objective of this program is to provide a suitable and reliable platform for the unmarried youth of the community to identify each other and simplify the process of choosing a life partner. This convention increases communication between families and builds good relationships."
+      },
+      {
+        "title": "Organization of Educational Guidance Camp",
+        "description": "The main objective of this camp is to guide students in choosing the right career. Expert guidance is provided on studies, competitive exams, and future options, so that students can move forward in the right direction."
+      },
+      {
+        "title": "Second Snehmilan Cultural Program",
+        "description": "The purpose of this Snehmilan is to increase unity and brotherhood among the members of the community. Through various cultural programs, arts, and entertainment activities, community members connect with each other and keep the culture alive."
+      },
+      {
+        "title": "Organization of NSPL Nayaka Samaj Premier League Tennis Cricket Tournament",
+        "description": "This sports festival attempts to develop enthusiasm for sports and a spirit of healthy competition among the youth. The NSPL tournament provides a stage for community players to showcase their talent and helps in increasing unity and team spirit."
+      },
+      {
+        "title": "Printing Notebooks for Distribution at Subsidized Rates for Educational Purposes",
+        "description": "Through this initiative, notebooks are made available to needy students at a lower cost. This is an important effort to promote education and reduce the financial burden on students."
+      },
+      {
+        "title": "Educational Tour for Nayka Samaj Students",
+        "description": "This initiative aims to provide Nayka Samaj students with valuable learning experiences beyond the classroom through educational tours. These trips are designed to enhance students' knowledge, expose them to new environments, and promote practical understanding of subjects. By organizing such tours, the community encourages curiosity, environmental awareness, and personal development among students. It also helps build confidence, teamwork, and a broader perspective for their future growth."
+      },
+      {
+        "title": "Service to Nayaka Samaj during Disasters",
+        "description": "Immediate assistance is provided by the Nayaka Samaj to needy people during natural disasters or crises. Food, clothing, medicines, and other essentials are provided to serve humanity and strengthen cooperation and empathy."
+      },
+      {
+        "title": "Felicitation of Bright Students",
+        "description": "This program honors talented and top-performing students to encourage them and inspire others with their hard work and achievements."
+      },
+      {
+        "title": "Trip for community members",
+        "description": "Organized for social workers, this trip provides both inspiration and entertainment, strengthening connections and re-energizing them for community service."
+      }
+    ],
     "slides": [
       {
         "title": "Empowering Nayka Community",
@@ -46,5 +85,10 @@
     "privacy": "Privacy Policy",
     "terms": "Terms & Conditions",
     "disclaimer": "Disclaimer"
+  },
+  "appDownload": {
+    "title": "Download Our Mobile App",
+    "description": "Stay connected with Nayka Samaj community features on your phone.",
+    "downloadNow": "Download Now"
   }
 }

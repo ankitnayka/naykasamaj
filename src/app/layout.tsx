@@ -7,6 +7,7 @@ import AuthProvider from "@/context/AuthProvider";
 import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
 import TopBar from "@/components/TopBar/TopBar";
+import AppDownloadPopup from "@/components/AppDownloadPopup/AppDownloadPopup";
 
 import { Roboto, Playfair_Display } from "next/font/google";
 
@@ -47,6 +48,7 @@ export default function RootLayout({
               <Navbar />
               <main>{children}</main>
               <Footer />
+              <AppDownloadPopup />
             </LanguageProvider>
           </ThemeProvider>
         </AuthProvider>
