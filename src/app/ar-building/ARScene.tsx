@@ -12,6 +12,11 @@ interface ARSceneProps {
   configScale: number;
   configDistance: number;
   forcePlacement: boolean;
+  configRotX: number;
+  configRotY: number;
+  configRotZ: number;
+  configBrightness: number;
+  configContrast: number;
 }
 
 const store = createXRStore({});
@@ -56,6 +61,11 @@ export default function ARScene({
   configScale,
   configDistance,
   forcePlacement,
+  configRotX,
+  configRotY,
+  configRotZ,
+  configBrightness,
+  configContrast,
 }: ARSceneProps) {
   const [placed, setPlaced] = useState(false);
   const [buildingMatrix, setBuildingMatrix] = useState<THREE.Matrix4 | null>(
@@ -152,7 +162,15 @@ export default function ARScene({
 
           {/* Building model — rendered once placed */}
           {placed && buildingMatrix && (
-            <BuildingModel matrix={buildingMatrix} scale={configScale} />
+            <BuildingModel 
+              matrix={buildingMatrix} 
+              scale={configScale}
+              rotX={configRotX}
+              rotY={configRotY}
+              rotZ={configRotZ}
+              brightness={configBrightness}
+              contrast={configContrast}
+            />
           )}
         </XR>
       </Canvas>

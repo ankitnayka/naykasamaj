@@ -12,6 +12,11 @@ const ARScene = dynamic(() => import("./ARScene"), { ssr: false });
 // Admin config defaults
 const DEFAULT_SCALE = 1.0;
 const DEFAULT_DISTANCE = 15; // metres
+const DEFAULT_ROT_X = 0;
+const DEFAULT_ROT_Y = 0;
+const DEFAULT_ROT_Z = 0;
+const DEFAULT_BRIGHTNESS = 1.0;
+const DEFAULT_CONTRAST = 1.0;
 
 function ARBuildingInner() {
   const { language } = useLanguage();
@@ -25,6 +30,24 @@ function ARBuildingInner() {
   const [configScale, setConfigScale] = useState(DEFAULT_SCALE);
   const [configDistance, setConfigDistance] = useState(DEFAULT_DISTANCE);
   const [forcePlacement, setForcePlacement] = useState(false);
+  
+  // New Admin configured state
+  const [configRotX, setConfigRotX] = useState(DEFAULT_ROT_X);
+  const [configRotY, setConfigRotY] = useState(DEFAULT_ROT_Y);
+  const [configRotZ, setConfigRotZ] = useState(DEFAULT_ROT_Z);
+  const [configBrightness, setConfigBrightness] = useState(DEFAULT_BRIGHTNESS);
+  const [configContrast, setConfigContrast] = useState(DEFAULT_CONTRAST);
+
+  const resetAllSettings = () => {
+    setConfigScale(DEFAULT_SCALE);
+    setConfigDistance(DEFAULT_DISTANCE);
+    setForcePlacement(false);
+    setConfigRotX(DEFAULT_ROT_X);
+    setConfigRotY(DEFAULT_ROT_Y);
+    setConfigRotZ(DEFAULT_ROT_Z);
+    setConfigBrightness(DEFAULT_BRIGHTNESS);
+    setConfigContrast(DEFAULT_CONTRAST);
+  };
 
   // Helper to send phone browser logs to the PC terminal
   const remoteLog = (msg: string, err?: any) => {
@@ -134,6 +157,11 @@ function ARBuildingInner() {
           configScale={configScale}
           configDistance={configDistance}
           forcePlacement={forcePlacement}
+          configRotX={configRotX}
+          configRotY={configRotY}
+          configRotZ={configRotZ}
+          configBrightness={configBrightness}
+          configContrast={configContrast}
         />
         <div className={styles.arOverlay}>
           <button
@@ -178,13 +206,93 @@ function ARBuildingInner() {
                 <input
                   type="range"
                   min={0.1}
-                  max={10}
+                  max={150}
                   step={0.1}
                   value={configScale}
                   onChange={(e) => setConfigScale(parseFloat(e.target.value))}
                   className={styles.adminSlider}
                 />
-                <span className={styles.adminRange}>0.1× — 10×</span>
+                <span className={styles.adminRange}>0.1× — 150×</span>
+              </div>
+              
+              <div className={styles.adminRow}>
+                <label className={styles.adminLabel}>
+                  Rotation Y (Horizontal):{" "}
+                  <strong>{configRotY}°</strong>
+                </label>
+                <input
+                  type="range"
+                  min={-180}
+                  max={180}
+                  step={1}
+                  value={configRotY}
+                  onChange={(e) => setConfigRotY(parseInt(e.target.value))}
+                  className={styles.adminSlider}
+                />
+              </div>
+
+              <div className={styles.adminRow}>
+                <label className={styles.adminLabel}>
+                  Rotation X (Pitch):{" "}
+                  <strong>{configRotX}°</strong>
+                </label>
+                <input
+                  type="range"
+                  min={-180}
+                  max={180}
+                  step={1}
+                  value={configRotX}
+                  onChange={(e) => setConfigRotX(parseInt(e.target.value))}
+                  className={styles.adminSlider}
+                />
+              </div>
+
+              <div className={styles.adminRow}>
+                <label className={styles.adminLabel}>
+                  Rotation Z (Roll):{" "}
+                  <strong>{configRotZ}°</strong>
+                </label>
+                <input
+                  type="range"
+                  min={-180}
+                  max={180}
+                  step={1}
+                  value={configRotZ}
+                  onChange={(e) => setConfigRotZ(parseInt(e.target.value))}
+                  className={styles.adminSlider}
+                />
+              </div>
+
+              <div className={styles.adminRow}>
+                <label className={styles.adminLabel}>
+                  Brightness:{" "}
+                  <strong>{configBrightness.toFixed(2)}</strong>
+                </label>
+                <input
+                  type="range"
+                  min={0}
+                  max={3}
+                  step={0.05}
+                  value={configBrightness}
+                  onChange={(e) => setConfigBrightness(parseFloat(e.target.value))}
+                  className={styles.adminSlider}
+                />
+              </div>
+
+              <div className={styles.adminRow}>
+                <label className={styles.adminLabel}>
+                  Contrast:{" "}
+                  <strong>{configContrast.toFixed(2)}</strong>
+                </label>
+                <input
+                  type="range"
+                  min={0}
+                  max={3}
+                  step={0.05}
+                  value={configContrast}
+                  onChange={(e) => setConfigContrast(parseFloat(e.target.value))}
+                  className={styles.adminSlider}
+                />
               </div>
 
               <div className={styles.adminRow}>
@@ -219,6 +327,13 @@ function ARBuildingInner() {
                   <span className={styles.adminRange}>1m — 50m</span>
                 </div>
               )}
+
+              <button 
+                className={styles.resetSettingsButton}
+                onClick={resetAllSettings}
+              >
+                Reset All Settings
+              </button>
             </div>
           )}
 

@@ -323,3 +323,48 @@
   cursor: pointer;
 }
 
+.resetSettingsButton {
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px;
+  background: transparent;
+  color: #D4AF37;
+  border: 1px dashed #D4AF37;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.resetSettingsButton:hover {
+  background: rgba(212, 175, 55, 0.1);
+  color: #fff;
+  border-color: #fff;
+}
+
+.adminDivider {
+  border: none;
+  border-top: 1px solid #2a2a2a;
+  margin: 12px 0;
+}
+
+.adminResetBtn {
+  width: 100%;
+  padding: 10px;
+  background: #1a1a1a;
+  color: #D4AF37;
+  border: 1px solid #D4AF37;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  letter-spacing: 0.5px;
+}
+
+.adminResetBtn:hover {
+  background: #2a2008;
+}
+
+
