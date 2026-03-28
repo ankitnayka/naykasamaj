@@ -367,4 +367,35 @@
   background: #2a2008;
 }
 
+/* ── Spatial Controls (AR Overlay) ───────────────────────── */
+.spatialControls {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  border-radius: 12px;
+  padding: 12px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 220px;
+  margin-bottom: 12px;
+}
 
+.spatialRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.spatialRow label {
+  color: #fff;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.spatialRow input[type="range"] {
+  accent-color: #D4AF37;
+  width: 100%;
+}
