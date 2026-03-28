@@ -1,92 +1,64 @@
 "use client";
 
-import React, { useRef, useState, useCallback, useEffect } from "react";
-import { Canvas, useThree } from "@react-three/fiber";
-import { XR, createXRStore } from "@react-three/xr";
+import React, { useRef, useState } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { XR } from "@react-three/xr";
 import * as THREE from "three";
-import HitTestReticle from "./HitTestReticle";
 import BuildingModel from "./BuildingModel";
 
 interface ARSceneProps {
+  store: any;
   onExit: () => void;
   configScale: number;
-  configDistance: number;
-  forcePlacement: boolean;
   configRotX: number;
   configRotY: number;
   configRotZ: number;
   configBrightness: number;
   configContrast: number;
+  configSaturation: number;
 }
 
-const store = createXRStore({});
+// ── Native WebXR Image Tracker ──────────────────────────────────────────────
+function ImageTracker({ onTrack }: { onTrack: (matrix: THREE.Matrix4) => void }) {
+  useFrame((state) => {
+    // Access the raw WebXR frame from React Three Fiber
+    const frame = state.gl.xr.getFrame();
+    if (!frame) return;
 
-// ── Force placement inner component ─────────────────────────────────────────
-// Runs inside the Canvas/XR context so we have access to the R3F camera.
-function ForcePlacer({
-  distance,
-  onPlace,
-}: {
-  distance: number;
-  onPlace: (matrix: THREE.Matrix4) => void;
-}) {
-  const { camera } = useThree();
-  const placed = useRef(false);
+    // Use native WebXR Image Tracking API
+    // @ts-ignore - getImageTrackingResults might be missing from older TypeScript DOM types
+    const results = frame.getImageTrackingResults ? frame.getImageTrackingResults() : [];
 
-  useEffect(() => {
-    if (placed.current) return;
-    placed.current = true;
-
-    // Build a matrix that is `distance` metres directly in front of the camera
-    // and 1.5 m below eye level (approximate ground level).
-    const dir = new THREE.Vector3();
-    camera.getWorldDirection(dir);
-    dir.y = 0;
-    dir.normalize();
-
-    const pos = camera.position.clone().addScaledVector(dir, distance);
-    pos.y -= 1.5; // bring to approximate floor
-
-    const matrix = new THREE.Matrix4();
-    matrix.setPosition(pos);
-    onPlace(matrix);
-  }, [camera, distance, onPlace]);
+    for (const result of results) {
+      if (result.trackingState === "tracked") {
+        const referenceSpace = state.gl.xr.getReferenceSpace();
+        if (referenceSpace) {
+          const pose = frame.getPose(result.imageSpace, referenceSpace);
+          if (pose) {
+            const matrix = new THREE.Matrix4().fromArray(pose.transform.matrix);
+            onTrack(matrix);
+          }
+        }
+      }
+    }
+  });
 
   return null;
 }
 
 // ── Main scene ───────────────────────────────────────────────────────────────
 export default function ARScene({
+  store,
   onExit,
   configScale,
-  configDistance,
-  forcePlacement,
   configRotX,
   configRotY,
   configRotZ,
   configBrightness,
   configContrast,
+  configSaturation,
 }: ARSceneProps) {
-  const [placed, setPlaced] = useState(false);
-  const [buildingMatrix, setBuildingMatrix] = useState<THREE.Matrix4 | null>(
-    null
-  );
-  const reticleMatrixRef = useRef<THREE.Matrix4>(new THREE.Matrix4());
-
-  const handlePlace = useCallback(() => {
-    if (placed) return;
-    setBuildingMatrix(reticleMatrixRef.current.clone());
-    setPlaced(true);
-  }, [placed]);
-
-  const handleReticleUpdate = useCallback((matrix: THREE.Matrix4) => {
-    reticleMatrixRef.current.copy(matrix);
-  }, []);
-
-  const handleForcePlace = useCallback((matrix: THREE.Matrix4) => {
-    setBuildingMatrix(matrix);
-    setPlaced(true);
-  }, []);
+  const [trackedMatrix, setTrackedMatrix] = useState<THREE.Matrix4 | null>(null);
 
   return (
     <>
@@ -113,7 +85,6 @@ export default function ARScene({
       </button>
 
       <Canvas
-        onPointerMissed={!forcePlacement ? handlePlace : undefined}
         style={{
           position: "fixed",
           top: 0,
@@ -126,50 +97,19 @@ export default function ARScene({
           <ambientLight intensity={0.8} />
           <directionalLight position={[5, 10, 5]} intensity={1.2} castShadow />
 
-          {/* Force placement mode: auto-place at configDistance without needing surface tracking */}
-          {forcePlacement && !placed && (
-            <ForcePlacer distance={configDistance} onPlace={handleForcePlace} />
-          )}
+          <ImageTracker onTrack={(matrix) => setTrackedMatrix(matrix.clone())} />
 
-          {/* Normal mode: show invisible tap interceptor + reticle */}
-          {!forcePlacement && !placed && (
-            <>
-              {/* Large invisible sphere to catch taps anywhere on screen */}
-              <mesh
-                onPointerDown={(e) => {
-                  e.stopPropagation();
-                  handlePlace();
-                }}
-                scale={100}
-              >
-                <sphereGeometry args={[1, 16, 16]} />
-                <meshBasicMaterial
-                  color="red"
-                  side={THREE.BackSide}
-                  transparent
-                  opacity={0.001}
-                  depthWrite={false}
-                />
-              </mesh>
-
-              {/* Surface-tracking reticle with "Searching..." text */}
-              <HitTestReticle
-                onUpdate={handleReticleUpdate}
-                onSelect={handlePlace}
-              />
-            </>
-          )}
-
-          {/* Building model — rendered once placed */}
-          {placed && buildingMatrix && (
+          {/* Render building only when tracked by the marker */}
+          {trackedMatrix && (
             <BuildingModel 
-              matrix={buildingMatrix} 
+              matrix={trackedMatrix} 
               scale={configScale}
               rotX={configRotX}
               rotY={configRotY}
               rotZ={configRotZ}
               brightness={configBrightness}
               contrast={configContrast}
+              saturation={configSaturation}
             />
           )}
         </XR>

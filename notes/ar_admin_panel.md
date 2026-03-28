@@ -51,3 +51,4 @@ At the bottom of the panel is a **Reset All Settings** button. Clicking this ins
 1. **Calibrate First:** Set your expected scale and rotation *before* tapping Start AR.
 2. **If Stuck:** If the "Searching for floor" message doesn't disappear after moving your phone sideways a few times, hit **Exit AR**, enable **Force Placement** in the admin panel, and try again.
 3. **Lighting matching:** While looking at the building through the camera, if the building looks unnaturally bright, hit Exit AR, drop the brightness slider slightly, and re-enter.
+

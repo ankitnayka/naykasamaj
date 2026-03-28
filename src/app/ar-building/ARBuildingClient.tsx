@@ -3,6 +3,7 @@
 import React, { useState, useEffect, Suspense } from "react";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
+import { createXRStore } from "@react-three/xr";
 import { useLanguage } from "@/context/LanguageContext";
 import styles from "./ar-building.module.css";
 
@@ -11,12 +12,12 @@ const ARScene = dynamic(() => import("./ARScene"), { ssr: false });
 
 // Admin config defaults
 const DEFAULT_SCALE = 1.0;
-const DEFAULT_DISTANCE = 15; // metres
 const DEFAULT_ROT_X = 0;
 const DEFAULT_ROT_Y = 0;
 const DEFAULT_ROT_Z = 0;
 const DEFAULT_BRIGHTNESS = 1.0;
 const DEFAULT_CONTRAST = 1.0;
+const DEFAULT_SATURATION = 1.0;
 
 function ARBuildingInner() {
   const { language } = useLanguage();
@@ -25,28 +26,27 @@ function ARBuildingInner() {
 
   const [arSupported, setArSupported] = useState<boolean | null>(null);
   const [arActive, setArActive] = useState(false);
+  
+  // Custom XR store built after image bitmap loads
+  const [store, setStore] = useState<any>(null);
 
   // Admin configurable state
-  const [configScale, setConfigScale] = useState(DEFAULT_SCALE);
-  const [configDistance, setConfigDistance] = useState(DEFAULT_DISTANCE);
-  const [forcePlacement, setForcePlacement] = useState(false);
-  
-  // New Admin configured state
+  const [configScale, setConfigScale] = useState(DEFAULT_SCALE); // Represents width in M
   const [configRotX, setConfigRotX] = useState(DEFAULT_ROT_X);
   const [configRotY, setConfigRotY] = useState(DEFAULT_ROT_Y);
   const [configRotZ, setConfigRotZ] = useState(DEFAULT_ROT_Z);
   const [configBrightness, setConfigBrightness] = useState(DEFAULT_BRIGHTNESS);
   const [configContrast, setConfigContrast] = useState(DEFAULT_CONTRAST);
+  const [configSaturation, setConfigSaturation] = useState(DEFAULT_SATURATION);
 
   const resetAllSettings = () => {
     setConfigScale(DEFAULT_SCALE);
-    setConfigDistance(DEFAULT_DISTANCE);
-    setForcePlacement(false);
     setConfigRotX(DEFAULT_ROT_X);
     setConfigRotY(DEFAULT_ROT_Y);
     setConfigRotZ(DEFAULT_ROT_Z);
     setConfigBrightness(DEFAULT_BRIGHTNESS);
     setConfigContrast(DEFAULT_CONTRAST);
+    setConfigSaturation(DEFAULT_SATURATION);
   };
 
   // Helper to send phone browser logs to the PC terminal
@@ -58,26 +58,41 @@ function ARBuildingInner() {
   };
 
   useEffect(() => {
-    remoteLog("Component Mounted");
-    let isMounted = true;
+    remoteLog("Component Mounted, initializing Image Tracking...");
 
-    const failsafe = setTimeout(() => {
-      if (isMounted) {
-        remoteLog("Hard failsafe triggered. Forcing AR button to appear.");
-        setArSupported((prev) => (prev === null ? true : prev));
+    async function initializeImageTracker() {
+      try {
+        // Load the target image (the physical hook)
+        const img = new Image();
+        img.src = "/marker.jpeg"; // The user's target QR/Poster
+        await img.decode();
+        
+        const bitmap = await createImageBitmap(img);
+
+        // Build a store strictly requesting Image Tracking and providing our target bitmap
+        const xrTrackerStore = createXRStore({
+          customSessionInit: {
+            requiredFeatures: ["image-tracking"],
+            // @ts-ignore - WebXR draft API types might be missing in older Typescript
+            trackedImages: [
+              {
+                image: bitmap,
+                widthInMeters: 0.21, // A4 physical paper width in meters
+              },
+            ],
+          },
+        });
+        
+        setStore(xrTrackerStore);
+
+        // Check if WebXR is supported now that the store is ready
+        checkARSupport();
+      } catch (err) {
+        remoteLog("Failed to embed Image Tracker", err);
       }
-    }, 4000);
+    }
 
-    remoteLog("Starting checkARSupport");
-    checkARSupport()
-      .then(() => remoteLog("checkARSupport finished"))
-      .catch((e) => remoteLog("checkARSupport threw error", e))
-      .finally(() => clearTimeout(failsafe));
-
-    return () => {
-      isMounted = false;
-      clearTimeout(failsafe);
-    };
+    initializeImageTracker();
   }, []);
 
   async function checkARSupport() {
@@ -96,12 +111,7 @@ function ARBuildingInner() {
       remoteLog("Calling navigator.xr.isSessionSupported");
       const supported = await Promise.race([
         (navigator as any).xr.isSessionSupported("immersive-ar"),
-        new Promise((resolve) => {
-          setTimeout(() => {
-            remoteLog("XR check timed out after 3s");
-            resolve("timeout");
-          }, 3000);
-        }),
+        new Promise((resolve) => setTimeout(() => resolve("timeout"), 3000)),
       ]);
       remoteLog(`isSessionSupported resolved with: ${supported}`);
       setArSupported(supported === "timeout" || supported === true);
@@ -116,52 +126,50 @@ function ARBuildingInner() {
       title: "Nayaka Samaj Bhavan",
       subtitle: "Experience our community building in augmented reality",
       description:
-        "Place the Nayaka Samaj Bhavan right in your surroundings using your phone's camera. Walk around it, see it from every angle, and experience the building as if it were truly there.",
+        "Scan the Nayaka Samaj QR marker using your phone's camera. The building will physically hook to your paper. Walk around it and see it from every angle.",
       startAR: "Start AR Experience",
       howTitle: "How It Works",
       step1: "Tap the button above to start",
-      step2: "Point your camera at a flat surface",
-      step3: "Tap the screen to place the building",
+      step2: "Point your camera exactly at the printed Marker",
+      step3: "Watch the building instantly spawn on top",
       step4: "Walk around to explore from every angle",
       notSupported:
-        "AR experience requires an Android device with Google Chrome. Please open this page on an Android phone to use the AR feature.",
+        "AR experience requires an Android device with Google Chrome.",
       exitAR: "Exit AR",
-      loading: "Preparing AR...",
+      loading: "Calibrating Tracker...",
     },
     gu: {
       title: "નાયકા સમાજ ભવન",
       subtitle: "ઓગમેન્ટેડ રિયાલિટીમાં અમારું સમાજ ભવન જુઓ",
       description:
-        "તમારા ફોનના કૅમેરાનો ઉપયોગ કરીને નાયકા સમાજ ભવનને તમારી આસપાસ મૂકો. તેની આસપાસ ચાલો, દરેક ખૂણેથી જુઓ, અને ભવનનો અનુભવ કરો.",
+        "તમારા ફોનના કૅમેરાનો ઉપયોગ કરીને નાયકા સમાજ માર્કર સ્કેન કરો. ભવન આપોઆપ તેની સાથે જોડાઈ જશે.",
       startAR: "AR અનુભવ શરૂ કરો",
       howTitle: "કેવી રીતે કામ કરે છે",
       step1: "શરૂ કરવા માટે ઉપરનું બટન દબાવો",
-      step2: "તમારો કૅમેરો સપાટ સપાટી તરફ રાખો",
-      step3: "ભવન મૂકવા માટે સ્ક્રીન પર ટૅપ કરો",
+      step2: "તમારો કૅમેરો માર્કર તરફ રાખો",
+      step3: "ભવનને માર્કર પર જોવો",
       step4: "દરેક ખૂણે જોવા માટે ફરતા ચાલો",
-      notSupported:
-        "AR અનુભવ માટે Google Chrome સાથે Android ઉપકરણ જરૂરી છે. AR સુવિધા વાપરવા માટે કૃપા કરીને આ પેજ Android ફોન પર ખોલો.",
+      notSupported: "AR અનુભવ માટે Google Chrome સાથે Android ઉપકરણ જરૂરી છે.",
       exitAR: "AR બંધ કરો",
-      loading: "AR તૈયાર કરી રહ્યા છીએ...",
+      loading: "AR માર્કર તૈયાર કરી રહ્યા છીએ...",
     },
   };
 
   const t = text[language as keyof typeof text] || text.en;
 
-  // If AR is active, show full-screen AR scene
-  if (arActive) {
+  if (arActive && store) {
     return (
       <div className={styles.arFullscreen}>
         <ARScene
+          store={store}
           onExit={() => setArActive(false)}
           configScale={configScale}
-          configDistance={configDistance}
-          forcePlacement={forcePlacement}
           configRotX={configRotX}
           configRotY={configRotY}
           configRotZ={configRotZ}
           configBrightness={configBrightness}
           configContrast={configContrast}
+          configSaturation={configSaturation}
         />
         <div className={styles.arOverlay}>
           <button
@@ -177,7 +185,6 @@ function ARBuildingInner() {
 
   return (
     <div className={styles.page}>
-      {/* Hero Section */}
       <section className={styles.hero}>
         <div className={styles.heroContent}>
           <h1 className={styles.title}>{t.title}</h1>
@@ -185,34 +192,33 @@ function ARBuildingInner() {
         </div>
       </section>
 
-      {/* Main Content */}
       <section className={styles.mainSection}>
         <div className="container">
           <p className={styles.description}>{t.description}</p>
 
-          {/* ── Admin Config Panel (only visible with ?admin=true) ── */}
+          {/* ── Admin Config Panel ── */}
           {isAdmin && (
             <div className={styles.adminPanel}>
               <div className={styles.adminHeader}>
-                🔧 AR Calibration Settings{" "}
+                🔧 AR Tracker Calibration{" "}
                 <span className={styles.adminBadge}>ADMIN</span>
               </div>
 
               <div className={styles.adminRow}>
                 <label className={styles.adminLabel}>
-                  Model Scale:{" "}
-                  <strong>{configScale.toFixed(1)}×</strong>
+                  Model Width (Meters):{" "}
+                  <strong>{configScale.toFixed(2)}m</strong>
                 </label>
                 <input
                   type="range"
                   min={0.1}
-                  max={150}
+                  max={50}
                   step={0.1}
                   value={configScale}
                   onChange={(e) => setConfigScale(parseFloat(e.target.value))}
                   className={styles.adminSlider}
                 />
-                <span className={styles.adminRange}>0.1× — 150×</span>
+                <span className={styles.adminRange}>0.1m — 50.0m</span>
               </div>
               
               <div className={styles.adminRow}>
@@ -297,36 +303,19 @@ function ARBuildingInner() {
 
               <div className={styles.adminRow}>
                 <label className={styles.adminLabel}>
-                  <input
-                    type="checkbox"
-                    checked={forcePlacement}
-                    onChange={(e) => setForcePlacement(e.target.checked)}
-                    className={styles.adminCheck}
-                  />
-                  &nbsp;Force Placement (Skip Surface Detection)
+                  Saturation:{" "}
+                  <strong>{configSaturation.toFixed(2)}</strong>
                 </label>
+                <input
+                  type="range"
+                  min={0}
+                  max={3}
+                  step={0.05}
+                  value={configSaturation}
+                  onChange={(e) => setConfigSaturation(parseFloat(e.target.value))}
+                  className={styles.adminSlider}
+                />
               </div>
-
-              {forcePlacement && (
-                <div className={styles.adminRow}>
-                  <label className={styles.adminLabel}>
-                    Forward Distance:{" "}
-                    <strong>{configDistance}m</strong>
-                  </label>
-                  <input
-                    type="range"
-                    min={1}
-                    max={50}
-                    step={1}
-                    value={configDistance}
-                    onChange={(e) =>
-                      setConfigDistance(parseInt(e.target.value))
-                    }
-                    className={styles.adminSlider}
-                  />
-                  <span className={styles.adminRange}>1m — 50m</span>
-                </div>
-              )}
 
               <button 
                 className={styles.resetSettingsButton}
@@ -337,8 +326,7 @@ function ARBuildingInner() {
             </div>
           )}
 
-          {/* AR Button or Not Supported Message */}
-          {arSupported === null ? (
+          {!store || arSupported === null ? (
             <div className={styles.loadingState}>
               <div className={styles.spinner} />
               <p>{t.loading}</p>
@@ -360,7 +348,6 @@ function ARBuildingInner() {
         </div>
       </section>
 
-      {/* How It Works */}
       <section className={styles.howSection}>
         <div className="container">
           <h2 className={styles.sectionTitle}>{t.howTitle}</h2>
@@ -388,7 +375,6 @@ function ARBuildingInner() {
   );
 }
 
-// Wrap in Suspense boundary so useSearchParams works in Next.js App Router
 export default function ARBuildingClient() {
   return (
     <Suspense fallback={null}>
