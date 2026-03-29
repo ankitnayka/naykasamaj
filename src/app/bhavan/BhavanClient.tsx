@@ -24,9 +24,9 @@ export default function BhavanClient() {
     <div className={styles.page}>
       <section className={styles.hero}>
         <div className={styles.heroContent}>
-          <h1 className={styles.title}>Nayaka Samaj Bhavan</h1>
+          <h1 className={styles.title}>{t.bhavan.title}</h1>
           <p className={styles.subtitle}>
-            Explore the architectural vision and premium renders of our upcoming community center.
+            {t.bhavan.subtitle}
           </p>
         </div>
       </section>
@@ -51,7 +51,7 @@ export default function BhavanClient() {
                     priority={index < 3}
                   />
                   <div className={styles.overlay}>
-                    <span>View Image</span>
+                    <span>{t.bhavan.viewImage}</span>
                   </div>
                 </div>
               </div>

@@ -91,5 +91,10 @@
     "title": "Download Our Mobile App",
     "description": "Stay connected with Nayka Samaj community features on your phone.",
     "downloadNow": "Download Now"
+  },
+  "bhavan": {
+    "title": "Nayaka Samaj Bhavan",
+    "subtitle": "Explore the architectural vision and premium renders of our upcoming community center.",
+    "viewImage": "View Image"
   }
 }
