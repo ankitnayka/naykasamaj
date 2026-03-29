@@ -48,7 +48,7 @@ const Navbar = () => {
             <Link href="/" className={styles.navItem} onClick={() => setIsMenuOpen(false)}>{t.nav.home}</Link>
             <Link href="/about" className={styles.navItem} onClick={() => setIsMenuOpen(false)}>{t.nav.about}</Link>
             <Link href="/contact" className={styles.navItem} onClick={() => setIsMenuOpen(false)}>{t.nav.contact}</Link>
-            <Link href="/ar-building" className={styles.navItem} onClick={() => setIsMenuOpen(false)}>{t.nav.arBuilding}</Link>
+            <Link href="/bhavan" className={styles.navItem} onClick={() => setIsMenuOpen(false)}>{t.nav.arBuilding}</Link>
             <Link
               href="https://play.google.com/store/apps/details?id=com.directory.nayakasamaj"
               target="_blank"

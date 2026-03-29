@@ -1,0 +1,176 @@
+.page {
+  min-height: 100vh;
+  background-color: var(--background);
+}
+
+.hero {
+  background: linear-gradient(135deg, #800020 0%, #4a0012 50%, #1a0008 100%);
+  padding: 80px 20px 60px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 1;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.title {
+  color: #D4AF37;
+  font-size: 2.8rem;
+  margin-bottom: 16px;
+  letter-spacing: 0.5px;
+}
+
+.subtitle {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1.15rem;
+  line-height: 1.6;
+}
+
+.gallerySection {
+  padding: 60px 20px;
+  background-color: var(--surface);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.masonryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.imageCard {
+  cursor: pointer;
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: #1a0008;
+  aspect-ratio: 4 / 3;
+}
+
+.imageCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(128, 0, 32, 0.4);
+}
+
+.imageWrapper {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+}
+
+.galleryImage {
+  transition: transform 0.5s ease;
+}
+
+.imageCard:hover .galleryImage {
+  transform: scale(1.05);
+}
+
+.overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+  padding: 20px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  height: 100%;
+}
+
+.imageCard:hover .overlay {
+  opacity: 1;
+}
+
+.overlay span {
+  color: #D4AF37;
+  font-weight: 600;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transform: translateY(20px);
+  transition: transform 0.3s ease;
+}
+
+.imageCard:hover .overlay span {
+  transform: translateY(0);
+}
+
+/* Lightbox Modal */
+.lightbox {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.95);
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.closeBtn {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  z-index: 100001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.closeBtn:hover {
+  background: rgba(212, 175, 55, 0.2);
+  border-color: #D4AF37;
+  color: #D4AF37;
+  transform: rotate(90deg);
+}
+
+.lightboxContent {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-width: 1400px;
+  max-height: 90vh;
+  animation: scaleUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes scaleUp {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@media (max-width: 768px) {
+  .title { font-size: 2.2rem; }
+  .masonryGrid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+  .closeBtn { top: 15px; right: 15px; width: 40px; height: 40px; }
+}
